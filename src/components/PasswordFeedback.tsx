@@ -4,15 +4,16 @@ import type { ZXCVBNResult } from 'zxcvbn';
 
 interface Props {
 	zxcvbn: ZXCVBNResult | null;
+	minScore: number;
 	className?: string;
+	isLoading: boolean;
 }
 
 // Define color stops for each score level
 const colors = ['#FF0000', '#FF4400', '#FFA200', '#FFFF00', '#37FF00'];
 const words = ['Weak', 'Fair', 'Good', 'Strong', 'Very Strong'];
-const minScore = 3;
 
-export default function PasswordFeedback({ zxcvbn, className = '' }: Props) {
+export default function PasswordFeedback({ zxcvbn, className = '', minScore, isLoading }: Props) {
 	// Calculate the score index (0-4)
 	const score = zxcvbn ? Math.min(zxcvbn.score, 4) : 0;
 
@@ -51,9 +52,20 @@ export default function PasswordFeedback({ zxcvbn, className = '' }: Props) {
 				</div>
 			</div>
 			<div className="text-xs text-gray-500 mt-1">
-				Your password would take&nbsp;
-				<span className="font-bold">{feedbackDisplay}</span>
-				&nbsp;to crack.
+				{isLoading ? (
+					<>
+						<div className="flex items-center gap-2">
+							<div className="loading loading-xs" />
+							<span>Checking password strength...</span>
+						</div>
+					</>
+				) : (
+					<>
+						Your password would take&nbsp;
+						<span className="font-bold">{feedbackDisplay}</span>
+						&nbsp;to crack.
+					</>
+				)}
 			</div>
 			{zxcvbn && zxcvbn.feedback.suggestions.length > 0 ? (
 				<div className="text-xs text-gray-800 mt-4">
